@@ -1,0 +1,67 @@
+﻿<div class="alert alert-info" data-ng-hide="message.status.length">
+  <p><strong>Loading. Please wait... {{counter}}%</strong>
+    <button data-ng-click="stop()" class="btn btn-small btn-danger pull-right"><i class="icon-remove"></i> Cancel</button>
+  </p>
+  <div id="progressstatus" class="progress progress-striped active">
+    <div class="bar"></div>
+  </div>
+</div>
+
+<div data-ng-show="message.status.length">
+  <div class="alert alert-{{message.status}}">
+    <strong>{{message.text}}</strong>
+  </div>
+
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#testsrun" data-toggle="tab">Test results</a></li>
+    <li data-ng-show="errorlist.length"><a href="#errortests" data-toggle="tab">Errors and failures</a></li>
+    <li data-ng-show="ignoredlist.length"><a href="#ignoredtests" data-toggle="tab">Test not run</a></li>
+    <li data-ng-show="textoutput.length"><a href="#textoutput" data-toggle="tab">Text output</a></li>
+  </ul>
+ 
+  <div class="tab-content">
+    <div class="tab-pane active" id="testsrun">
+      <div data-ng-repeat="fixture in fixtures" class="bs-docs">
+        <span class="doctitle">{{fixture.name}}</span>
+        <table class="table table-stripped table-bordered table-condensed table-hover">
+          <tr data-ng-repeat="test in fixture.tests" class="{{test.status}}">
+            <td>
+              <span title="{{test.description}}">{{test.name}}</span>
+              <pre data-ng-show="test.message.length">{{test.message}}</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="errortests" data-ng-show="errorlist.length">
+      <div data-ng-repeat="fixture in errorlist" class="bs-docs">
+        <span class="doctitle">{{fixture.name}}</span>
+        <table class="table table-stripped table-bordered table-condensed table-hover">
+          <tr data-ng-repeat="test in fixture.tests" class="{{test.status}}">
+            <td>
+              <span title="{{test.description}}">{{test.name}}</span>
+              <pre data-ng-show="test.message.length">{{test.message}}</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="ignoredtests" data-ng-show="ignoredlist.length">
+      <div data-ng-repeat="fixture in ignoredlist" class="bs-docs">
+        <span class="doctitle">{{fixture.name}}</span>
+        <table class="table table-stripped table-bordered table-condensed table-hover">
+          <tr data-ng-repeat="test in fixture.tests" class="{{test.status}}">
+            <td>
+              <span title="{{test.description}}">{{test.name}}</span>
+              <pre data-ng-show="test.message.length">{{test.message}}</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="textoutput" data-ng-show="textoutput.length">
+      <pre>{{textoutput}}</pre>
+    </div>
+  </div>
+
+</div>

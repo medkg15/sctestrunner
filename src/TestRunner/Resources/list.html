@@ -1,0 +1,22 @@
+﻿<div class="form-inline bs-docs" data-ng-show="categories.length">
+  <span class="doctitle">Categories</span>
+  <label class="checkbox inline" data-ng-repeat="category in categories">
+    <input type="checkbox" name="selected" data-ng-click="updateSelection($event, category.name)">
+    <span class="help-inline">{{category.name}}</span>
+  </label>
+  <a class="btn btn-info btn-small docbutton" href="#/category/{{categorygroup}}"><i class="icon-th-list"></i> Run categories</a>
+</div>
+
+<div data-ng-repeat="fixture in fixtures" class="bs-docs">
+  <span class="doctitle">{{fixture.name}}</span>
+  <a class="btn btn-info btn-small docbutton" href="#/fixture/{{fixture.name}}"><i class="icon-th-large"></i> Run tests</a>
+  <table class="table table-stripped table-bordered table-condensed table-hover">
+    <tr data-ng-repeat="test in fixture.tests">
+      <td>
+        <span title="{{test.description}}">{{test.name}}</span>
+        <a class="btn btn-mini btn-{{test.status}} pull-right" href="#/test/{{test.id}}"><i class="icon-asterisk"></i> Run</a>
+      </td>
+    </tr>
+  </table>
+</div>
+
