@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{9594C323-FFE2-43D0-BA36-AAF1A8B6C8AD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{319D2979-5B3F-48F6-9984-317055BFA76F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExamples", "TestExamples\TestExamples.csproj", "{486E1359-7838-4838-A907-DF9C593AE276}"
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9594C323-FFE2-43D0-BA36-AAF1A8B6C8AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9594C323-FFE2-43D0-BA36-AAF1A8B6C8AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9594C323-FFE2-43D0-BA36-AAF1A8B6C8AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9594C323-FFE2-43D0-BA36-AAF1A8B6C8AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{319D2979-5B3F-48F6-9984-317055BFA76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{319D2979-5B3F-48F6-9984-317055BFA76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{319D2979-5B3F-48F6-9984-317055BFA76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
