@@ -37,12 +37,12 @@
 
             var codeBase = Assembly.GetExecutingAssembly().CodeBase;
             var directoryName = Path.GetDirectoryName(codeBase);
-            if (directoryName == null) throw new DirectoryNotFoundException();
+            if (directoryName == null) throw new DirectoryNotFoundException("Unable to determine running location for test runner");
 
-            // Ensure the assembly path exist
-            var currentDirectory = new UriBuilder(directoryName).Path;
+            // Ensure the assembly path exists
+            var currentDirectory = new Uri(directoryName).LocalPath;
             assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName));
-            if (!File.Exists(assemblypath)) throw new FileNotFoundException();
+            if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
 
             // Get the test result path
             testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
