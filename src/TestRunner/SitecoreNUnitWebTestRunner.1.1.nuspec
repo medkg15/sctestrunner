@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>SitecoreNUnitWebTestRunner</id>
+    <version>1.1</version>
+    <title>Sitecore NUnit Web Test Runner</title>
+    <authors>Jorge Lusar</authors>
+    <iconUrl>http://www.sitecore.net/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>NUnit test runner that can execute in web context</description>
+    <dependencies>
+      <dependency id="NUnit" version="2.6.4" />
+      <dependency id="NUnitTestAdapter" version="2.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\NUnitContrib.Web.TestRunner.dll" target="lib\net45\NUnitContrib.Web.TestRunner.dll" />
+    <file src="App_Config\Include\TestRunnerConfig.config" target="content\App_Config\Include\TestRunnerConfig.config" />
+  </files>
+</package>

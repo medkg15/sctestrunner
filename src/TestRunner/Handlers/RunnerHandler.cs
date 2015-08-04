@@ -11,6 +11,7 @@
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
+    using Sitecore.Configuration;
 
     public class RunnerHandler : BaseHttpHandler, EventListener
     {
@@ -21,7 +22,7 @@
         private readonly StringBuilder consoleBuilder = new StringBuilder();
 
         private readonly string prefix;
-        private readonly string assemblypath;
+        private readonly List<string> assemblyList;
         private readonly string testresultpath;
         private readonly TestPackage package;
 
@@ -31,7 +32,7 @@
 
         public RunnerHandler() : this(null, null, null) { }
 
-        public RunnerHandler(string prefix, string assemblyName, string testResult)
+        public RunnerHandler(string prefix, List<string> assemblies, string testResult)
         {
             this.prefix = prefix;
 
@@ -41,15 +42,25 @@
 
             // Ensure the assembly path exists
             var currentDirectory = new Uri(directoryName).LocalPath;
-            assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName));
-            if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+
+            assemblyList = new List<string>();
+            foreach (var assemblyName in assemblies)
+            {
+                var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName + ".dll"));
+                if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+                assemblyList.Add(assemblypath);
+            }
 
             // Get the test result path
-            testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
+            if (!string.IsNullOrEmpty(testResult))
+            {
+                testResult = testResult.Replace("$(dataFolder)", Settings.DataFolder);
+                testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
+            }
 
             // Initialize NUnit
             if (!CoreExtensions.Host.Initialized) CoreExtensions.Host.InitializeService();
-            package = new TestPackage(assemblypath);
+            package = new TestPackage(prefix, assemblyList);
             var testSuite = new TestSuiteBuilder().Build(package);
 
             // Recursively load all tests
@@ -146,7 +157,7 @@
 
         private object GetTestSuite()
         {
-            return new { assemblypath, testresultpath };
+            return new { assemblyList, testresultpath = testresultpath ?? "(none)" };
         }
 
         private object GetCategories()
@@ -224,7 +235,7 @@
                     name = r.Test.MethodName,
                     fixture = r.Test.ClassName,
                     description = r.Test.Description,
-                    message = String.Concat(r.Message, r.IsFailure ? r.StackTrace : string.Empty),
+                    message = String.Concat(r.Message, r.IsError ? "\r\n" + r.StackTrace : string.Empty),
                     status = getStatus(r)
                 })
                 .ToArray();
@@ -364,17 +375,20 @@
             Console.SetOut(consoleOut);
 
             // Write the TestResult.xml
-            var testResultBuilder = new StringBuilder();
-            using (var writer = new StringWriter(testResultBuilder))
+            if (testresultpath != null)
             {
-                var xmlWriter = new XmlResultWriter(writer);
-                xmlWriter.SaveTestResult(result);
-            }
+                var testResultBuilder = new StringBuilder();
+                using (var writer = new StringWriter(testResultBuilder))
+                {
+                    var xmlWriter = new XmlResultWriter(writer);
+                    xmlWriter.SaveTestResult(result);
+                }
 
-            var xmlOutput = testResultBuilder.ToString();
-            using (var writer = new StreamWriter(testresultpath))
-            {
-                writer.Write(xmlOutput);
+                var xmlOutput = testResultBuilder.ToString();
+                using (var writer = new StreamWriter(testresultpath))
+                {
+                    writer.Write(xmlOutput);
+                }
             }
         }
 
