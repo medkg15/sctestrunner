@@ -22,6 +22,12 @@
         [Test]
         public void ShouldThrowException()
         {
+            MethodThrowsException();
+        }
+
+        private void MethodThrowsException()
+        {
+            //add to stack trace to test formatting
             throw new Exception("This exception is a test");
         }
 

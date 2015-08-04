@@ -235,7 +235,7 @@
                     name = r.Test.MethodName,
                     fixture = r.Test.ClassName,
                     description = r.Test.Description,
-                    message = String.Concat(r.Message, r.IsFailure ? r.StackTrace : string.Empty),
+                    message = String.Concat(r.Message, r.IsError ? "\r\n" + r.StackTrace : string.Empty),
                     status = getStatus(r)
                 })
                 .ToArray();
