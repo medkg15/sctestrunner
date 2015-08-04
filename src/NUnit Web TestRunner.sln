@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExamples", "TestExample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExamples2", "TestExamples2\TestExamples2.csproj", "{EE6A6236-B1C3-4D76-8D9C-4901D59106DC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{5A1DEE8E-17BC-4A4B-82F6-D43B7FC10B71}"
+	ProjectSection(SolutionItems) = preProject
+		TestRunner\SitecoreNUnitWebTestRunner.1.1.nuspec = TestRunner\SitecoreNUnitWebTestRunner.1.1.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

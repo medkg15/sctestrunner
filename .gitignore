@@ -13,6 +13,10 @@ _ReSharper.*
 *.resharper
 Ankh.NoLoad
 
+#nuget packages
+src/packages/*
+*.nupkg
+
 #Sitecore Ignore
 lib/Sitecore/*
 
