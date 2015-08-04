@@ -3,7 +3,7 @@
 /* Controllers */
 function TestSuiteCtrl($scope, $http) {
 	$http.get('gettestsuite.json').success(function (data) {
-		$scope.assemblypath = data.assemblypath;
+	    $scope.assemblyList = data.assemblyList;
 		$scope.testresultpath = data.testresultpath;
 	});
 }

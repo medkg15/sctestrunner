@@ -21,7 +21,7 @@
         private readonly StringBuilder consoleBuilder = new StringBuilder();
 
         private readonly string prefix;
-        private readonly string assemblypath;
+        private readonly List<string> assemblyList;
         private readonly string testresultpath;
         private readonly TestPackage package;
 
@@ -31,7 +31,7 @@
 
         public RunnerHandler() : this(null, null, null) { }
 
-        public RunnerHandler(string prefix, string assemblyName, string testResult)
+        public RunnerHandler(string prefix, List<string> assemblies, string testResult)
         {
             this.prefix = prefix;
 
@@ -41,15 +41,21 @@
 
             // Ensure the assembly path exists
             var currentDirectory = new Uri(directoryName).LocalPath;
-            assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName));
-            if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+
+            assemblyList = new List<string>();
+            foreach (var assemblyName in assemblies)
+            {
+                var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName + ".dll"));
+                if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+                assemblyList.Add(assemblypath);
+            }
 
             // Get the test result path
             testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
 
             // Initialize NUnit
             if (!CoreExtensions.Host.Initialized) CoreExtensions.Host.InitializeService();
-            package = new TestPackage(assemblypath);
+            package = new TestPackage(prefix, assemblyList);
             var testSuite = new TestSuiteBuilder().Build(package);
 
             // Recursively load all tests
@@ -146,7 +152,7 @@
 
         private object GetTestSuite()
         {
-            return new { assemblypath, testresultpath };
+            return new { assemblyList, testresultpath };
         }
 
         private object GetCategories()
