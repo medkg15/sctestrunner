@@ -11,6 +11,7 @@
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
+    using Sitecore.Configuration;
 
     public class RunnerHandler : BaseHttpHandler, EventListener
     {
@@ -51,7 +52,11 @@
             }
 
             // Get the test result path
-            testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
+            if (!string.IsNullOrEmpty(testResult))
+            {
+                testResult = testResult.Replace("$(dataFolder)", Settings.DataFolder);
+                testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
+            }
 
             // Initialize NUnit
             if (!CoreExtensions.Host.Initialized) CoreExtensions.Host.InitializeService();
@@ -152,7 +157,7 @@
 
         private object GetTestSuite()
         {
-            return new { assemblyList, testresultpath };
+            return new { assemblyList, testresultpath = testresultpath ?? "(none)" };
         }
 
         private object GetCategories()
@@ -370,17 +375,20 @@
             Console.SetOut(consoleOut);
 
             // Write the TestResult.xml
-            var testResultBuilder = new StringBuilder();
-            using (var writer = new StringWriter(testResultBuilder))
+            if (testresultpath != null)
             {
-                var xmlWriter = new XmlResultWriter(writer);
-                xmlWriter.SaveTestResult(result);
-            }
+                var testResultBuilder = new StringBuilder();
+                using (var writer = new StringWriter(testResultBuilder))
+                {
+                    var xmlWriter = new XmlResultWriter(writer);
+                    xmlWriter.SaveTestResult(result);
+                }
 
-            var xmlOutput = testResultBuilder.ToString();
-            using (var writer = new StreamWriter(testresultpath))
-            {
-                writer.Write(xmlOutput);
+                var xmlOutput = testResultBuilder.ToString();
+                using (var writer = new StreamWriter(testresultpath))
+                {
+                    writer.Write(xmlOutput);
+                }
             }
         }
 

@@ -28,7 +28,6 @@
 
             Assert.IsNotNullOrEmpty(RouteName, "You must configure a RouteName");
             Assert.IsNotNullOrEmpty(RoutePath, "You must configure a RoutePath");
-            Assert.IsNotNullOrEmpty(ResultPath, "You must configure a ResultPath");
             Assert.IsTrue(Assemblies.Any(), "You must configure at least one assembly");
             RegisterRoutes();
         }
