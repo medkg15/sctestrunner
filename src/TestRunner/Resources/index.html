@@ -3,40 +3,56 @@
   <head>
     <meta charset="utf-8">
     <title>NUnit Test Runner</title>
-    <link rel="stylesheet" href="bootstrap.css">
+    <!-- Need to figure out why the icons don't load correctly when using the local file. -->
+    <!--<link rel="stylesheet" href="bootstrap.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="app.css">
   </head>
   <body>
     <div id="wrap">
-      <div class="navbar navbar-fixed-top" data-ng-controller="TestSuiteCtrl">
-        <div class="navbar-inner">
-          <div class="container">
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="brand" href="#">NUnit Test Runner</a>
-            <div class="nav-collapse collapse">
-              <ul class="nav">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Test suite info <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li class="nav-header">Assemblies</li>
-                    <li ng-repeat="assembly in assemblyList"><a href="#">{{assembly}}</a></li>
-                    <li class="divider"></li>
-                    <li class="nav-header"> Test result path</li>
-                    <li><a href="#">{{testresultpath}}</a></li>
-                  </ul>
-                </li>
-              </ul>
-              <div class="navbar-form pull-right">
-                <a class="btn btn-info" href="#/test/all"><i class="icon-th"></i> Run all tests</a>
-              </div>
+        <nav class="navbar navbar-default" data-ng-controller="TestSuiteCtrl">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#/">NUnit Test Runner</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="main-navbar">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                Test suite info <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="">Assemblies</a></li>
+                                <li ng-repeat="assembly in assemblyList">
+                                    <a href="#">{{assembly}}</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="">Test result path</a></li>
+                                <li>
+                                    <a href="#">{{testresultpath}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a class="btn btn-info" href="#/test/all">
+                                <i class="glyphicon glyphicon-th"></i>
+                                Run all tests
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
+        </nav>
 
       <div class="container">
         <!--[if lt IE 9]>
@@ -54,7 +70,7 @@
       <div class="container">
         <p class="muted credit">Built with
           <a href="http://www.nunit.org/" target="_blank">nunit</a>,
-          <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">bootstrap</a> and
+          <a href="http://getbootstrap.com/" target="_blank">bootstrap</a> and
           <a href="http://angularjs.org/" target="_blank">angularjs</a>.
           Code licensed under the
           <a href="http://opensource.org/licenses/mit-license.php" target="_blank">The MIT License</a>.</p>

@@ -119,9 +119,20 @@
                 case "bootstrap.css":
                     ReturnResource(context, file, "text/css");
                     break;
-                case "glyphicons-halflings-white.png":
-                case "glyphicons-halflings.png":
-                    ReturnImage(context, file, ImageFormat.Png, "image/png");
+                case "glyphicons-halflings-regular.eot":
+                    ReturnResource(context, file, "application/vnd.ms-fontobject");
+                    break;
+                case "glyphicons-halflings-regular.svg":
+                    ReturnResource(context, file, "image/svg+xml");
+                    break;
+                case "glyphicons-halflings-regular.ttf":
+                    ReturnResource(context, file, "application/octet-stream");
+                    break;
+                case "glyphicons-halflings-regular.woff":
+                    ReturnResource(context, file, "application/font-woff");
+                    break;
+                case "glyphicons-halflings-regular.woff2":
+                    ReturnResource(context, file, "application/font-woff2");
                     break;
                 case "gettestsuite.json":
                     ReturnJson(context, GetTestSuite());
@@ -201,7 +212,7 @@
                         return "success";
                     case ResultState.Error:
                     case ResultState.Failure:
-                        return "error";
+                        return "danger";
                     default:
                         return "warning";
                 }
@@ -220,7 +231,7 @@
             // Get the status
             string status;
             if (passed == results.Count) status = "success";
-            else if (failed + errors > 0) status = "error";
+            else if (failed + errors > 0) status = "danger";
             else status = "warning";
 
             // Get the message
@@ -242,7 +253,7 @@
                 .ToArray();
 
             var fixtures = list.GroupBy(x => x.fixture).Select(g => new { name = g.Key, tests = g.ToArray() });
-            var errorlist = list.Where(x => x.status == "error").GroupBy(x => x.fixture).Select(g => new { name = g.Key, tests = g.ToArray() });
+            var errorlist = list.Where(x => x.status == "danger").GroupBy(x => x.fixture).Select(g => new { name = g.Key, tests = g.ToArray() });
             var ignoredlist = list.Where(x => x.status == "warning").GroupBy(x => x.fixture).Select(g => new { name = g.Key, tests = g.ToArray() });
             var textoutput = textOutputBuilder.ToString().TrimEnd();
 

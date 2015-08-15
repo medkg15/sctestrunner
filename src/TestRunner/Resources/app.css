@@ -68,5 +68,9 @@ margin: 20px 0;
   right: -1px;
 }
 
-
+.cancel-tests-btn {
+    bottom: 6px;
+    left: 6px;
+    position: relative;
+}
 

@@ -1,9 +1,10 @@
 ﻿<div class="alert alert-info" data-ng-hide="message.status.length">
-  <p><strong>Loading. Please wait... {{counter}}%</strong>
-    <button data-ng-click="stop()" class="btn btn-small btn-danger pull-right"><i class="icon-remove"></i> Cancel</button>
+  <p>
+    <strong>Loading. Please wait... {{counter}}%</strong>
   </p>
-  <div id="progressstatus" class="progress progress-striped active">
-    <div class="bar"></div>
+  <button data-ng-click="stop()" class="btn btn-small btn-danger pull-right cancel-tests-btn"><i class="glyphicon glyphicon-remove"></i> Cancel</button>
+  <div class="progress">
+    <div id="progressstatus" class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"></div>
   </div>
 </div>
 
@@ -13,12 +14,12 @@
   </div>
 
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#testsrun" data-toggle="tab">Test results</a></li>
-    <li data-ng-show="errorlist.length"><a href="#errortests" data-toggle="tab">Errors and failures</a></li>
-    <li data-ng-show="ignoredlist.length"><a href="#ignoredtests" data-toggle="tab">Test not run</a></li>
-    <li data-ng-show="textoutput.length"><a href="#textoutput" data-toggle="tab">Text output</a></li>
+    <li class="active"><a href="" data-target="#testsrun" data-toggle="tab">Test results</a></li>
+    <li data-ng-show="errorlist.length"><a href="" data-target="#errortests" data-toggle="tab">Errors and failures</a></li>
+    <li data-ng-show="ignoredlist.length"><a href="" data-target="#ignoredtests" data-toggle="tab">Test not run</a></li>
+    <li data-ng-show="textoutput.length"><a href="" data-target="#textoutput" data-toggle="tab">Text output</a></li>
   </ul>
- 
+
   <div class="tab-content">
     <div class="tab-pane active" id="testsrun">
       <div data-ng-repeat="fixture in fixtures" class="bs-docs">

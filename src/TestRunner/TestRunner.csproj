@@ -89,8 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\bootstrap.js" />
-    <EmbeddedResource Include="Resources\glyphicons-halflings-white.png" />
-    <EmbeddedResource Include="Resources\glyphicons-halflings.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\jquery.js" />
@@ -104,6 +102,13 @@
   <ItemGroup>
     <None Include="App_Config\Include\TestRunnerConfig.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Resources\glyphicons-halflings-regular.eot" />
+    <EmbeddedResource Include="Resources\glyphicons-halflings-regular.ttf" />
+    <EmbeddedResource Include="Resources\glyphicons-halflings-regular.woff" />
+    <EmbeddedResource Include="Resources\glyphicons-halflings-regular.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\glyphicons-halflings-regular.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -82,10 +82,10 @@ function runTests($scope, $http, $timeout, url) {
 			$scope.counter = data.counter;
 			if (data.active) {
 				var perc = data.counter + '%';
-				$('.bar').css('width', perc);
+				$('.progress-bar').css('width', perc);
 				mytimeout = $timeout($scope.onTimeout, 1000);
 			} else {
-				$('.progress').removeClass('active');
+				$('.progress-bar').removeClass('active');
 			}
 		});
 	};
