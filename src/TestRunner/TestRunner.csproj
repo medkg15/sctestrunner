@@ -98,7 +98,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\angular-route.js" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="App_Config\Include\TestRunnerConfig.config" />
     <None Include="packages.config" />

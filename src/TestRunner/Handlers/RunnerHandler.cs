@@ -108,6 +108,7 @@
                     ReturnResource(context, file, "text/html");
                     break;
                 case "angular.js":
+                case "angular-route.js":
                 case "app.js":
                 case "bootstrap.js":
                 case "controllers.js":

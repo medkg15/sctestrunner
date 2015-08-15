@@ -1,14 +1,21 @@
 ﻿'use strict';
 
 /* Controllers */
-function TestSuiteCtrl($scope, $http) {
+angular.module('runner')
+.controller('TestSuiteCtrl', ['$scope', '$http',
+function($scope, $http) {
+
 	$http.get('gettestsuite.json').success(function (data) {
 	    $scope.assemblyList = data.assemblyList;
 		$scope.testresultpath = data.testresultpath;
 	});
-}
 
-function TestListCtrl($scope, $http) {
+}]);
+
+angular.module('runner')
+.controller('TestListCtrl', ['$scope', '$http',
+function($scope, $http) {
+
 	$http.get('getcategories.json').success(function (data) {
 		$scope.categories = data.categories;
 	});
@@ -30,15 +37,23 @@ function TestListCtrl($scope, $http) {
 		}
 		$scope.categorygroup = categorygroup.join();
 	};
-}
 
-function FixtureDetailCtrl($scope, $http, $timeout, $routeParams) {
+}]);
+
+angular.module('runner')
+.controller('FixtureDetailCtrl', ['$scope', '$http', '$timeout', '$routeParams',
+function($scope, $http, $timeout, $routeParams) {
+
 	var name = $routeParams.name;
 	var url = 'runfixture.json?name=' + name;
 	runTests($scope, $http, $timeout, url);
-}
 
-function TestDetailCtrl($scope, $http, $timeout, $routeParams) {
+}]);
+
+angular.module('runner')
+.controller('TestDetailCtrl', ['$scope', '$http', '$timeout', '$routeParams',
+function($scope, $http, $timeout, $routeParams) {
+
 	var id = $routeParams.id;
 	var url;
 	if (id == 'all') {
@@ -47,13 +62,18 @@ function TestDetailCtrl($scope, $http, $timeout, $routeParams) {
 		url = 'runtest.json?id=' + id;
 	}
 	runTests($scope, $http, $timeout, url);
-}
 
-function CategoryDetailCtrl($scope, $http, $timeout, $routeParams) {
+}]);
+
+angular.module('runner')
+.controller('CategoryDetailCtrl', ['$scope', '$http', '$timeout', '$routeParams',
+function($scope, $http, $timeout, $routeParams) {
+
 	var name = $routeParams.name;
 	var url = 'runcategories.json?name=' + name;
 	runTests($scope, $http, $timeout, url);
-}
+
+}]);
 
 function runTests($scope, $http, $timeout, url) {
 	$scope.counter = 0;
@@ -69,14 +89,14 @@ function runTests($scope, $http, $timeout, url) {
 			}
 		});
 	};
-	
+
 	var mytimeout = $timeout($scope.onTimeout, 1000);
 
 	$scope.stop = function () {
 		$timeout.cancel(mytimeout);
 		$http.get("cancel.json");
 	};
-	
+
 	$http.get(url).success(function (data) {
 		$scope.message = data.message;
 		$scope.fixtures = data.fixtures;
