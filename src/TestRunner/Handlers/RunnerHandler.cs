@@ -1,8 +1,10 @@
-﻿namespace NUnitContrib.Web.TestRunner.Handlers
+﻿using System.Configuration;
+using NUnitContrib.Web.TestRunner.Configuration;
+
+namespace NUnitContrib.Web.TestRunner.Handlers
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -11,10 +13,13 @@
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
-    using Sitecore.Configuration;
 
     public class RunnerHandler : BaseHttpHandler, EventListener
     {
+
+        private static readonly TestRunnerSection testRunnerConfig =
+            ConfigurationManager.GetSection("testrunner") as TestRunnerSection;
+
         private readonly List<NUnitTestMethod> tests = new List<NUnitTestMethod>();
         private readonly List<string> categories = new List<string>();
         private readonly List<TestResult> testResults = new List<TestResult>();
@@ -30,11 +35,17 @@
         private StringWriter consoleStringWriter;
         private int totalTests;
 
-        public RunnerHandler() : this(null, null, null) { }
+        public RunnerHandler() : this(null) { }
 
-        public RunnerHandler(string prefix, List<string> assemblies, string testResult)
+        public RunnerHandler(string prefix)
         {
-            this.prefix = prefix;
+            if (string.IsNullOrEmpty(testRunnerConfig.RoutePath))
+                throw new ConfigurationErrorsException("You must configure a route path.");
+
+            if (testRunnerConfig.Assemblies == null || testRunnerConfig.Assemblies.Count == 0)
+                throw new ConfigurationErrorsException("You must configure at least one assembly.");
+
+            this.prefix = testRunnerConfig.RoutePath;
 
             var codeBase = Assembly.GetExecutingAssembly().CodeBase;
             var directoryName = Path.GetDirectoryName(codeBase);
@@ -44,18 +55,18 @@
             var currentDirectory = new Uri(directoryName).LocalPath;
 
             assemblyList = new List<string>();
-            foreach (var assemblyName in assemblies)
+            foreach (AssemblyElement testAssembly in testRunnerConfig.Assemblies)
             {
-                var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, assemblyName + ".dll"));
+                var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
                 if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
                 assemblyList.Add(assemblypath);
             }
 
             // Get the test result path
-            if (!string.IsNullOrEmpty(testResult))
+            if (!string.IsNullOrEmpty(testRunnerConfig.ResultPath))
             {
-                testResult = testResult.Replace("$(dataFolder)", Settings.DataFolder);
-                testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testResult));
+                //testResult = testResult.Replace("$(dataFolder)", Settings.DataFolder);
+                testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
             }
 
             // Initialize NUnit
@@ -83,7 +94,7 @@
 
         public override void ProcessRequest(HttpContextBase context)
         {
-            var path = context.Request.AppRelativeCurrentExecutionFilePath;
+            var path = context.Request.Path;
             var fileName = Path.GetFileName(path);
             if (fileName == null)
             {
@@ -94,6 +105,9 @@
             var file = fileName.ToLowerInvariant();
             if (prefix.Equals(file))
             {
+                // If the users come to /testrunner instead of /testrunner/
+                // the assets links would be absolute so they couldn't be
+                // loaded.
                 context.Response.Redirect("/" + prefix + "/");
                 return;
             }

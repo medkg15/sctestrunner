@@ -46,9 +46,6 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.util.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Kernel">
-      <HintPath>..\..\lib\Sitecore\Sitecore.Kernel.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -68,7 +65,6 @@
     <Compile Include="Configuration\TestRunnerSection.cs" />
     <Compile Include="Handlers\BaseHttpHandler.cs" />
     <Compile Include="Handlers\RunnerHandler.cs" />
-    <Compile Include="Pipelines\RunnerConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +100,6 @@
     <EmbeddedResource Include="Resources\angular-route.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Config\Include\TestRunnerConfig.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\glyphicons-halflings-regular.eot" />
     <EmbeddedResource Include="Resources\glyphicons-halflings-regular.ttf" />
