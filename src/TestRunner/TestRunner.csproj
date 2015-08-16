@@ -50,6 +50,7 @@
       <HintPath>..\..\lib\Sitecore\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -62,6 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\AssemblyElement.cs" />
+    <Compile Include="Configuration\AssemblyElementCollection.cs" />
+    <Compile Include="Configuration\TestRunnerSection.cs" />
     <Compile Include="Handlers\BaseHttpHandler.cs" />
     <Compile Include="Handlers\RunnerHandler.cs" />
     <Compile Include="Pipelines\RunnerConfig.cs" />
