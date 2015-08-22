@@ -152,9 +152,6 @@
                 case "gettestsuite.json":
                     ReturnJson(context, GetTestSuite());
                     break;
-                case "getcategories.json":
-                    ReturnJson(context, GetCategories());
-                    break;
                 case "gettests.json":
                     ReturnJson(context, nunitWebRunner.GetTestSuiteInfo());
                     break;
@@ -185,11 +182,6 @@
         private object GetTestSuite()
         {
             return new { assemblyList, testresultpath = testresultpath ?? "(none)" };
-        }
-
-        private object GetCategories()
-        {
-            return new { categories = categories.Select(c => new {name = c}).ToArray() };
         }
 
         private object GetTestResult(List<TestResult> results)
