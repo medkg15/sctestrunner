@@ -64,6 +64,10 @@
     <Compile Include="Configuration\AssemblyElement.cs" />
     <Compile Include="Configuration\AssemblyElementCollection.cs" />
     <Compile Include="Configuration\TestRunnerSection.cs" />
+    <Compile Include="Core\NUnitWebRunner.cs" />
+    <Compile Include="Dtos\NUnitTestFixtureInfo.cs" />
+    <Compile Include="Dtos\NUnitTestInfo.cs" />
+    <Compile Include="Dtos\NUnitTestSuiteInfo.cs" />
     <Compile Include="Handlers\BaseHttpHandler.cs" />
     <Compile Include="Handlers\RunnerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

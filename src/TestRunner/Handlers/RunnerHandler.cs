@@ -1,10 +1,8 @@
-﻿using System.Configuration;
-using NUnitContrib.Web.TestRunner.Configuration;
-
-namespace NUnitContrib.Web.TestRunner.Handlers
+﻿namespace NUnitContrib.Web.TestRunner.Handlers
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -13,12 +11,16 @@ namespace NUnitContrib.Web.TestRunner.Handlers
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
+    using Configuration;
+    using Core;
 
     public class RunnerHandler : BaseHttpHandler, EventListener
     {
 
         private static readonly TestRunnerSection testRunnerConfig =
             ConfigurationManager.GetSection("testrunner") as TestRunnerSection;
+
+        private readonly NUnitWebRunner nunitWebRunner;
 
         private readonly List<NUnitTestMethod> tests = new List<NUnitTestMethod>();
         private readonly List<string> categories = new List<string>();
@@ -56,6 +58,8 @@ namespace NUnitContrib.Web.TestRunner.Handlers
                 if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
                 assemblyList.Add(assemblypath);
             }
+
+            nunitWebRunner = new NUnitWebRunner(assemblyList);
 
             // Get the test result path
             if (!string.IsNullOrEmpty(testRunnerConfig.ResultPath))
@@ -107,6 +111,8 @@ namespace NUnitContrib.Web.TestRunner.Handlers
                 return;
             }
 
+            nunitWebRunner.Session = context.Session;
+
             switch (file)
             {
                 case "":
@@ -150,7 +156,7 @@ namespace NUnitContrib.Web.TestRunner.Handlers
                     ReturnJson(context, GetCategories());
                     break;
                 case "gettests.json":
-                    ReturnJson(context, GetTests());
+                    ReturnJson(context, nunitWebRunner.GetTestSuiteInfo());
                     break;
                 case "getrunnerstatus.json":
                     ReturnJson(context, GetRunnerStatus());
@@ -184,31 +190,6 @@ namespace NUnitContrib.Web.TestRunner.Handlers
         private object GetCategories()
         {
             return new { categories = categories.Select(c => new {name = c}).ToArray() };
-        }
-
-        private object GetTests()
-        {
-            var list = tests
-                .OrderBy(t => t.TestName.TestID.ToString())
-                .Select(t => new
-                {
-                    id = t.TestName.FullName,
-                    name = t.MethodName,
-                    fixture = t.ClassName,
-                    description = t.Description,
-                    status = t.RunState == RunState.Runnable ? "info" : "warning"
-                })
-                .ToArray();
-
-            var fixtures = list
-                .GroupBy(x => x.fixture)
-                .Select(g => new
-                {
-                    name = g.Key,
-                    tests = g.ToArray()
-                });
-
-            return new { fixtures };
         }
 
         private object GetTestResult(List<TestResult> results)
