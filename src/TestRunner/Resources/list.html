@@ -1,8 +1,8 @@
 ﻿<div class="form-inline bs-docs" data-ng-show="categories.length">
   <span class="doctitle">Categories</span>
   <label class="checkbox-inline" data-ng-repeat="category in categories">
-    <input type="checkbox" name="selected" data-ng-click="updateSelection($event, category.name)">
-    {{category.name}}
+    <input type="checkbox" name="selected" data-ng-click="updateSelection($event, category)">
+    {{category}}
   </label>
   <a class="btn btn-info btn-small docbutton" href="#/category/{{categorygroup}}"><i class="icon-th-list"></i> Run categories</a>
 </div>

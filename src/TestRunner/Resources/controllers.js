@@ -7,7 +7,7 @@ function($scope, $http) {
 
 	$http.get('gettestsuite.json').success(function (data) {
 	    $scope.assemblyList = data.assemblyList;
-		$scope.testresultpath = data.testresultpath;
+		$scope.testresultpath = data.testResultPath;
 	});
 
 }]);
@@ -16,12 +16,9 @@ angular.module('runner')
 .controller('TestListCtrl', ['$scope', '$http',
 function($scope, $http) {
 
-	$http.get('getcategories.json').success(function (data) {
-		$scope.categories = data.categories;
-	});
-
 	$http.get('gettests.json').success(function (data) {
 		$scope.fixtures = data.fixtures;
+        $scope.categories = data.categories;
 	});
 
 	var selected = $scope.selected = [];
