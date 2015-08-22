@@ -6,10 +6,11 @@
     using System.Drawing.Imaging;
     using System.IO;
     using System.Net;
+    using System.Runtime.Serialization.Json;
+    using System.Text;
     using System.Web;
-    using System.Web.Routing;
-    using System.Web.Script.Serialization;
     using System.Web.SessionState;
+    using System.Web.Routing;
 
     public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IRequiresSessionState
     {
@@ -51,7 +52,13 @@
 
         protected void ReturnJson(HttpContextBase context, object o)
         {
-            var json = o == null ? String.Empty : new JavaScriptSerializer().Serialize(o);
+            var serializer = new DataContractJsonSerializer(o.GetType());
+            var json = string.Empty;
+            using (var ms = new MemoryStream())
+            {
+                serializer.WriteObject(ms, o);
+                json = Encoding.Default.GetString(ms.ToArray());
+            }
             context.Response.AppendHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
             context.Response.AppendHeader("Pragma", "no-cache"); // HTTP 1.0.
             context.Response.AppendHeader("Expires", "0"); // Proxies.
