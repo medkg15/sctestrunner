@@ -29,8 +29,8 @@
         private readonly StringBuilder consoleBuilder = new StringBuilder();
 
         private readonly List<string> assemblyList;
-        private readonly string testresultpath;
         private readonly TestPackage package;
+        private readonly string testResultPath;
 
         private SimpleTestRunner runner;
         private StringWriter consoleStringWriter;
@@ -59,13 +59,10 @@
                 assemblyList.Add(assemblypath);
             }
 
-            nunitWebRunner = new NUnitWebRunner(assemblyList);
-
             // Get the test result path
             if (!string.IsNullOrEmpty(testRunnerConfig.ResultPath))
             {
-                //testResult = testResult.Replace("$(dataFolder)", Settings.DataFolder);
-                testresultpath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
+                testResultPath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
             }
 
             // Initialize NUnit
@@ -89,6 +86,7 @@
                 });
 
             getTests(testSuite);
+            nunitWebRunner = new NUnitWebRunner(assemblyList, testResultPath);
         }
 
         public override void ProcessRequest(HttpContextBase context)
@@ -150,7 +148,7 @@
                     ReturnResource(context, file, "application/font-woff2");
                     break;
                 case "gettestsuite.json":
-                    ReturnJson(context, GetTestSuite());
+                    ReturnJson(context, nunitWebRunner.GetTestSuiteConfigInfo());
                     break;
                 case "gettests.json":
                     ReturnJson(context, nunitWebRunner.GetTestSuiteInfo());
@@ -177,11 +175,6 @@
                     NotFound(context);
                     break;
             }
-        }
-
-        private object GetTestSuite()
-        {
-            return new { assemblyList, testresultpath = testresultpath ?? "(none)" };
         }
 
         private object GetTestResult(List<TestResult> results)

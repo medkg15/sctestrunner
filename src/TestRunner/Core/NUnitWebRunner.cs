@@ -15,16 +15,28 @@
     {
 
         private readonly IReadOnlyCollection<string> assemblies;
+        private readonly string testResultPath;
+
         private TestPackage package;
         private TestSuite testSuite;
         private SimpleTestRunner runner;
 
-        public NUnitWebRunner(IReadOnlyCollection<string> assemblies)
+        public NUnitWebRunner(IReadOnlyCollection<string> assemblies, string testResultPath)
         {
             this.assemblies = assemblies;
+            this.testResultPath = testResultPath;
         }
 
         public HttpSessionStateBase Session { get; set; }
+
+        public NUnitTestSuiteConfigInfo GetTestSuiteConfigInfo()
+        {
+            return new NUnitTestSuiteConfigInfo
+            {
+                AssemblyList = assemblies,
+                TestResultPath = testResultPath ?? "(none)"
+            };
+        }
 
         public NUnitTestSuiteInfo GetTestSuiteInfo()
         {
