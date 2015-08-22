@@ -11,7 +11,7 @@
     using System.Web.Script.Serialization;
     using System.Web.SessionState;
 
-    public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IReadOnlySessionState
+    public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IRequiresSessionState
     {
         private readonly ConcurrentDictionary<string, string> resourceCache = new ConcurrentDictionary<string, string>();
         private readonly ConcurrentDictionary<string, byte[]> imageCache = new ConcurrentDictionary<string, byte[]>();
