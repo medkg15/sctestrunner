@@ -26,7 +26,6 @@ namespace NUnitContrib.Web.TestRunner.Handlers
         private readonly StringBuilder textOutputBuilder = new StringBuilder();
         private readonly StringBuilder consoleBuilder = new StringBuilder();
 
-        private readonly string prefix;
         private readonly List<string> assemblyList;
         private readonly string testresultpath;
         private readonly TestPackage package;
@@ -35,17 +34,13 @@ namespace NUnitContrib.Web.TestRunner.Handlers
         private StringWriter consoleStringWriter;
         private int totalTests;
 
-        public RunnerHandler() : this(null) { }
-
-        public RunnerHandler(string prefix)
+        public RunnerHandler()
         {
             if (string.IsNullOrEmpty(testRunnerConfig.RoutePath))
                 throw new ConfigurationErrorsException("You must configure a route path.");
 
             if (testRunnerConfig.Assemblies == null || testRunnerConfig.Assemblies.Count == 0)
                 throw new ConfigurationErrorsException("You must configure at least one assembly.");
-
-            this.prefix = testRunnerConfig.RoutePath;
 
             var codeBase = Assembly.GetExecutingAssembly().CodeBase;
             var directoryName = Path.GetDirectoryName(codeBase);
@@ -103,12 +98,12 @@ namespace NUnitContrib.Web.TestRunner.Handlers
             }
 
             var file = fileName.ToLowerInvariant();
-            if (prefix.Equals(file))
+            if (testRunnerConfig.RoutePath.Equals(file))
             {
                 // If the users come to /testrunner instead of /testrunner/
                 // the assets links would be absolute so they couldn't be
                 // loaded.
-                context.Response.Redirect("/" + prefix + "/");
+                context.Response.Redirect("/" + testRunnerConfig.RoutePath + "/");
                 return;
             }
 
