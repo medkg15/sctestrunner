@@ -1,9 +1,9 @@
-﻿using System.Runtime.Serialization;
-
-namespace NUnitContrib.Web.TestRunner.Dtos
+﻿namespace NUnitContrib.Web.TestRunner.Dtos
 {
+    using System.Runtime.Serialization;
+
     [DataContract]
-    public class NUnitTestInfo
+    public class TestInfo
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }

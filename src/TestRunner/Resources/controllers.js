@@ -97,8 +97,8 @@ function runTests($scope, $http, $timeout, url) {
 	$http.get(url).success(function (data) {
 		$scope.message = data.message;
 		$scope.fixtures = data.fixtures;
-		$scope.errorlist = data.errorlist;
-		$scope.ignoredlist = data.ignoredlist;
-		$scope.textoutput = data.textoutput;
+		$scope.errorlist = data.errorList;
+		$scope.ignoredlist = data.ignoredList;
+		$scope.textoutput = data.textOutput;
 	});
 }

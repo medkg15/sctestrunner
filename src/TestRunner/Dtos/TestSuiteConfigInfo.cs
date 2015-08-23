@@ -4,7 +4,7 @@
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class NUnitTestSuiteConfigInfo
+    public class TestSuiteConfigInfo
     {
         [DataMember(Name = "assemblyList")]
         public IEnumerable<string> AssemblyList { get; set; }
