@@ -3,22 +3,23 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Web;
     using System.IO;
     using System.Text;
+    using System.Runtime.Caching;
     using NUnit.Core;
     using Dtos;
     using NUnit.Core.Filters;
 
     /// <summary>
     /// Handle NUnit tests inside an ASP.NET environment.
-    /// It uses the session to save state and avoid losing data between requests.
+    /// It uses memory cache to save state and avoid losing data between requests.
     /// </summary>
     public class NUnitWebRunner : EventListener
     {
 
         private readonly IReadOnlyCollection<string> assemblies;
         private readonly string testResultPath;
+        private readonly MemoryCache runnerCache = MemoryCache.Default;
 
         public NUnitWebRunner(IReadOnlyCollection<string> assemblies, string testResultPath)
         {
@@ -28,36 +29,33 @@
 
         #region Properties
 
-        public HttpSessionStateBase Session { get; set; }
+        public string SessionId { get; set; }
 
         private TestPackage Package
         {
-            get { return Session["TestPackage"] as TestPackage; }
-            set { Session["TestPackage"] = value; }
+            get { return GetRunnerCacheItem<TestPackage>("TestPackage"); }
+            set { SetRunnerCacheItem("TestPackage", value); }
         }
 
         private TestSuite TestSuite
         {
-            get { return Session["TestSuite"] as TestSuite; }
-            set { Session["TestSuite"] = value; }
+            get { return GetRunnerCacheItem<TestSuite>("TestSuite"); }
+            set { SetRunnerCacheItem("TestSuite", value); }
         }
 
         private SimpleTestRunner Runner
         {
-            get { return Session["TestRunner"] as SimpleTestRunner; }
-            set { Session["TestRunner"] = value; }
+            get { return GetRunnerCacheItem<SimpleTestRunner>("TestRunner"); }
+            set { SetRunnerCacheItem("TestRunner", value); }
         }
 
         private List<NUnit.Core.TestResult> TestResults
         {
             get
             {
-                if (Session["TestResults"] == null)
-                {
-                    Session["TestResults"] = new List<NUnit.Core.TestResult>();
-                }
-
-                return Session["TestResults"] as List<NUnit.Core.TestResult>;
+                var testResults = GetRunnerCacheItem<List<NUnit.Core.TestResult>>("TestResults") ??
+                                  SetRunnerCacheItem("TestResults", new List<NUnit.Core.TestResult>());
+                return testResults;
             }
         }
 
@@ -65,12 +63,9 @@
         {
             get
             {
-                if (Session["TextOutputBuilder"] == null)
-                {
-                    Session["TextOutputBuilder"] = new StringBuilder();
-                }
-
-                return Session["TextOutputBuilder"] as StringBuilder;
+                var textOutputBuilder = GetRunnerCacheItem<StringBuilder>("TextOutputBuilder") ??
+                                        SetRunnerCacheItem("TextOutputBuilder", new StringBuilder());
+                return textOutputBuilder;
             }
         }
 
@@ -78,25 +73,22 @@
         {
             get
             {
-                if (Session["ConsoleBuilder"] == null)
-                {
-                    Session["ConsoleBuilder"] = new StringBuilder();
-                }
-
-                return Session["ConsoleBuilder"] as StringBuilder;
+                var consoleBuilder = GetRunnerCacheItem<StringBuilder>("ConsoleBuilder") ??
+                                     SetRunnerCacheItem("ConsoleBuilder", new StringBuilder());
+                return consoleBuilder;
             }
         }
 
         private StringWriter ConsoleStringWriter
         {
-            get { return Session["ConsoleStringWriter"] as StringWriter; }
-            set { Session["ConsoleStringWriter"] = value; }
+            get { return GetRunnerCacheItem<StringWriter>("ConsoleStringWriter"); }
+            set { SetRunnerCacheItem("ConsoleStringWriter", value); }
         }
 
         private int TotalTests
         {
-            get { return (int)Session["TotalTests"]; }
-            set { Session["TotalTests"] = value; }
+            get { return GetRunnerCacheItem<int>("TotalTests"); }
+            set { SetRunnerCacheItem("TotalTests", value); }
         }
 
         #endregion
@@ -114,12 +106,12 @@
         {
             CheckState();
 
-            var testsInfo = Session["TestSuiteInfo"] as TestSuiteInfo;
+            var testsInfo = GetRunnerCacheItem<TestSuiteInfo>("TestSuiteInfo");
             if (testsInfo != null)
                 return testsInfo;
 
             testsInfo = GetTestSuiteInfo(TestSuite);
-            Session["TestSuiteInfo"] = testsInfo;
+            SetRunnerCacheItem("TestSuiteInfo", testsInfo);
 
             return testsInfo;
         }
@@ -260,8 +252,8 @@
         /// </summary>
         private void CheckState()
         {
-            if (Session == null)
-                throw new InvalidOperationException("You must set the Session property before calling any other method.");
+            if (string.IsNullOrEmpty(SessionId))
+                throw new InvalidOperationException("You must set the SessionId property before calling any other method.");
 
             if (!CoreExtensions.Host.Initialized)
                 CoreExtensions.Host.InitializeService();
@@ -375,6 +367,17 @@
                 IgnoredList = ignoredList,
                 TextOutput = textoutput
             };
+        }
+
+        private T SetRunnerCacheItem<T>(string key, T item)
+        {
+            runnerCache[SessionId + ":" + key] = item;
+            return item;
+        }
+
+        private T GetRunnerCacheItem<T>(string key)
+        {
+            return (T)runnerCache[SessionId + ":" + key];
         }
 
         #region EventHandlers

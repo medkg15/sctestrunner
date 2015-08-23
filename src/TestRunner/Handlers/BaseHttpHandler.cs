@@ -12,7 +12,7 @@
     using System.Web.SessionState;
     using System.Web.Routing;
 
-    public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IRequiresSessionState
+    public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IReadOnlySessionState
     {
         private readonly ConcurrentDictionary<string, string> resourceCache = new ConcurrentDictionary<string, string>();
         private readonly ConcurrentDictionary<string, byte[]> imageCache = new ConcurrentDictionary<string, byte[]>();

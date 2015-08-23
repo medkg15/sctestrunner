@@ -72,7 +72,7 @@
                 return;
             }
 
-            nunitWebRunner.Session = context.Session;
+            nunitWebRunner.SessionId = context.Session.SessionID;
 
             switch (file)
             {
