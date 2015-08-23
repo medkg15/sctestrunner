@@ -7,6 +7,7 @@
     using System.Text;
     using System.Runtime.Caching;
     using NUnit.Core;
+    using NUnit.Util;
     using Dtos;
     using NUnit.Core.Filters;
 
@@ -399,6 +400,27 @@
 
         public void RunFinished(NUnit.Core.TestResult result)
         {
+            // Reset console output
+            ConsoleStringWriter.Dispose();
+            var consoleOut = Console.Out;
+            Console.SetOut(consoleOut);
+
+            // Write the TestResult.xml
+            if (!string.IsNullOrEmpty(testResultPath))
+            {
+                var testResultBuilder = new StringBuilder();
+                using (var writer = new StringWriter(testResultBuilder))
+                {
+                    var xmlWriter = new XmlResultWriter(writer);
+                    xmlWriter.SaveTestResult(result);
+                }
+
+                var xmlOutput = testResultBuilder.ToString();
+                using (var writer = new StreamWriter(testResultPath))
+                {
+                    writer.Write(xmlOutput);
+                }
+            }
         }
 
         public void TestFinished(NUnit.Core.TestResult result)
