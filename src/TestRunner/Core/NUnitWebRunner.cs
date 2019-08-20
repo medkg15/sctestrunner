@@ -15,7 +15,7 @@
     /// Handle NUnit tests inside an ASP.NET environment.
     /// It uses memory cache to save state and avoid losing data between requests.
     /// </summary>
-    public class NUnitWebRunner : EventListener
+    public class NUnitWebRunner : EventListener, IWebRunner
     {
 
         private readonly IReadOnlyCollection<string> assemblies;

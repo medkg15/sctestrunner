@@ -16,7 +16,7 @@
         private static readonly TestRunnerSection testRunnerConfig =
             ConfigurationManager.GetSection("testrunner") as TestRunnerSection;
 
-        private readonly NUnitWebRunner nunitWebRunner;
+        private readonly IWebRunner runner;
         private readonly List<string> assemblyList;
         private readonly string testResultPath;
 
@@ -49,7 +49,7 @@
                 testResultPath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
             }
 
-            nunitWebRunner = new NUnitWebRunner(assemblyList, testResultPath);
+            runner = new NUnitWebRunner(assemblyList, testResultPath);
         }
 
         public override void ProcessRequest(HttpContextBase context)
@@ -72,7 +72,7 @@
                 return;
             }
 
-            nunitWebRunner.SessionId = context.Session.SessionID;
+            runner.SessionId = context.Session.SessionID;
 
             switch (file)
             {
@@ -111,31 +111,31 @@
                     ReturnResource(context, file, "application/font-woff2");
                     break;
                 case "gettestsuite.json":
-                    ReturnJson(context, nunitWebRunner.GetTestSuiteConfigInfo());
+                    ReturnJson(context, runner.GetTestSuiteConfigInfo());
                     break;
                 case "gettests.json":
-                    ReturnJson(context, nunitWebRunner.GetTestSuiteInfo());
+                    ReturnJson(context, runner.GetTestSuiteInfo());
                     break;
                 case "getrunnerstatus.json":
-                    ReturnJson(context, nunitWebRunner.GetRunnerStatus());
+                    ReturnJson(context, runner.GetRunnerStatus());
                     break;
                 case "runfixture.json":
-                    ReturnJson(context, nunitWebRunner.RunFixture(context.Request["name"]));
+                    ReturnJson(context, runner.RunFixture(context.Request["name"]));
                     break;
                 case "runtest.json":
-                    ReturnJson(context, nunitWebRunner.RunTest(context.Request["id"]));
+                    ReturnJson(context, runner.RunTest(context.Request["id"]));
                     break;
                 case "runcategories.json":
                     var cats = context.Request["name"]
                         .Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries)
                         .Select(HttpUtility.UrlDecode);
-                    ReturnJson(context, nunitWebRunner.RunCategories(cats));
+                    ReturnJson(context, runner.RunCategories(cats));
                     break;
                 case "runtests.json":
-                    ReturnJson(context, nunitWebRunner.RunAllTests());
+                    ReturnJson(context, runner.RunAllTests());
                     break;
                 case "cancel.json":
-                    ReturnJson(context, nunitWebRunner.CancelRunner());
+                    ReturnJson(context, runner.CancelRunner());
                     break;
                 default:
                     NotFound(context);
