@@ -11,6 +11,13 @@ namespace NUnitContrib.Web.TestRunner.Configuration
             get { return (string)this["name"]; }
             set { this["name"] = value; }
         }
-        
+
+        [ConfigurationProperty("runner", IsRequired = true)]
+        public string Runner
+        {
+            get { return (string)this["runner"]; }
+            set { this["runner"] = value; }
+        }
+
     }
 }

@@ -16,7 +16,7 @@
         private static readonly TestRunnerSection testRunnerConfig =
             ConfigurationManager.GetSection("testrunner") as TestRunnerSection;
 
-        private static readonly IWebRunner runner;
+        private static readonly ConsolidatedRunner runner;
 
         static RunnerHandler()
         {
@@ -33,23 +33,45 @@
             // Ensure the assembly path exists
             var currentDirectory = new Uri(directoryName).LocalPath;
 
-            var assemblyList = new List<string>();
-            foreach (AssemblyElement testAssembly in testRunnerConfig.Assemblies)
-            {
-                var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
-                if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
-                assemblyList.Add(assemblypath);
-            }
-
-            string testResultPath = null;
             // Get the test result path
+            string testResultPath = null;
             if (!string.IsNullOrEmpty(testRunnerConfig.ResultPath))
             {
                 testResultPath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
             }
 
-            //runner = new NUnitWebRunner(assemblyList, testResultPath);
-            runner = new XUnitWebRunner(assemblyList, testResultPath);
+            var runners = new List<ITestRunner>();
+            var assemblyList = new List<string>();
+
+            foreach (var runnerGroup in testRunnerConfig.Assemblies.Cast<AssemblyElement>().GroupBy(a => a.Runner))
+            {
+                // xunit runner supports only a single assembly at a time, so we'll create one for each assembly.
+                // nunit runner can take them all.
+                if (runnerGroup.Key == "xunit")
+                {
+                    foreach (var testAssembly in runnerGroup)
+                    {
+                        var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
+                        if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+                        assemblyList.Add(assemblypath);
+                        runners.Add(new XUnitWebRunner(assemblypath, testResultPath));
+                    }
+                }
+                else if (runnerGroup.Key == "nunit")
+                {
+                    var nunitAssemblies = new List<string>();
+                    foreach (AssemblyElement testAssembly in testRunnerConfig.Assemblies)
+                    {
+                        var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
+                        if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
+                        nunitAssemblies.Add(assemblypath);
+                    }
+                    assemblyList.AddRange(nunitAssemblies);
+                    runners.Add(new NUnitWebRunner(nunitAssemblies, testResultPath));
+                }
+            }
+
+            runner = new ConsolidatedRunner(runners);
         }
 
         public override Task ProcessRequest(HttpContextBase context)
@@ -71,9 +93,7 @@
                 context.Response.Redirect("/" + testRunnerConfig.RoutePath + "/");
                 return Task.CompletedTask;
             }
-
-            runner.SessionId = context.Session.SessionID;
-
+            
             switch (file)
             {
                 case "":
@@ -127,7 +147,7 @@
                     break;
                 case "runcategories.json":
                     var cats = context.Request["name"]
-                        .Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries)
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(HttpUtility.UrlDecode);
                     ReturnJson(context, runner.RunCategories(cats));
                     break;

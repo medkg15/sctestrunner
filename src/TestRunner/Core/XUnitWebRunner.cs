@@ -12,22 +12,17 @@ using Xunit.Runners;
 
 namespace NUnitContrib.Web.TestRunner.Core
 {
-    public class XUnitWebRunner : IWebRunner
+    public class XUnitWebRunner : ITestRunner
     {
-        private readonly IReadOnlyCollection<string> assemblies;
-        private readonly string testResultPath;
-
         private readonly XunitFrontController controller;
         private Lazy<IList<ITestCase>> testCases;
         private volatile bool cancel;
         private bool running;
         private int completedTests;
 
-        public XUnitWebRunner(IReadOnlyCollection<string> assemblies, string testResultPath)
+        public XUnitWebRunner(string assembly)
         {
-            this.assemblies = assemblies;
-
-            controller = new XunitFrontController(AppDomainSupport.Denied, assemblies.First());
+            controller = new XunitFrontController(AppDomainSupport.Denied, assembly);
 
             testCases = new Lazy<IList<ITestCase>>(() => {
                 var discoverySink = new TestDiscoverySink();
@@ -63,15 +58,6 @@ namespace NUnitContrib.Web.TestRunner.Core
             {
                 return new RunnerStatus { Counter = 0, Active = false };
             }
-        }
-
-        public TestSuiteConfigInfo GetTestSuiteConfigInfo()
-        {
-            return new TestSuiteConfigInfo
-            {
-                TestResultPath = testResultPath,
-                AssemblyList = assemblies,
-            };
         }
 
         public TestSuiteInfo GetTestSuiteInfo()

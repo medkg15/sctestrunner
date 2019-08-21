@@ -83,6 +83,7 @@
     <Compile Include="Configuration\AssemblyElement.cs" />
     <Compile Include="Configuration\AssemblyElementCollection.cs" />
     <Compile Include="Configuration\TestRunnerSection.cs" />
+    <Compile Include="Core\ConsolidatedRunner.cs" />
     <Compile Include="Core\IWebRunner.cs" />
     <Compile Include="Core\NUnitWebRunner.cs" />
     <Compile Include="Core\XUnitTestResult.cs" />

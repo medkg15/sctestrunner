@@ -5,15 +5,11 @@ using NUnitContrib.Web.TestRunner.Dtos;
 
 namespace NUnitContrib.Web.TestRunner.Core
 {
-    public interface IWebRunner
+    public interface ITestRunner
     {
-        string SessionId { get; set; }
-
         StatusMessage CancelRunner();
 
         RunnerStatus GetRunnerStatus();
-
-        TestSuiteConfigInfo GetTestSuiteConfigInfo();
 
         TestSuiteInfo GetTestSuiteInfo();
 
