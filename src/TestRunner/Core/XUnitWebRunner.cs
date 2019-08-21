@@ -160,6 +160,7 @@ namespace NUnitContrib.Web.TestRunner.Core
                     Result = XUnitTestResultType.Passed,
                     TestCase = args.Message.TestCase,
                     ExecutionTime = args.Message.ExecutionTime,
+                    Message = args.Message.Output,
                 });
 
                 if (cancel)

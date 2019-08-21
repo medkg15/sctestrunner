@@ -6,23 +6,31 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace XunitTestExamples
 {
     public class TestCatOne
     {
+        private readonly ITestOutputHelper output;
+
+        public TestCatOne(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public void ShortTest()
         {
-            Console.WriteLine("Hello");
+            output.WriteLine("Hello");
             Assert.True(true);
-            Console.WriteLine("Bye");
+            output.WriteLine("Bye");
         }
 
         [Fact]
         public void LongTest()
         {
-            Console.WriteLine("Hola");
+            output.WriteLine("Hola");
             Thread.Sleep(2000);
             Assert.True(true);
         }
