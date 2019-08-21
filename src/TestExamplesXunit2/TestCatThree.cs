@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace NUnitContrib.Web.TestExamples2
+namespace TestExamplesXunit2
 {
     public class TestCatThree
     {

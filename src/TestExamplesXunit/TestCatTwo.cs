@@ -1,4 +1,4 @@
-﻿namespace NUnitContrib.Web.TestExamples
+﻿namespace TestExamplesXunit
 {
     using System;
     using System.Threading;

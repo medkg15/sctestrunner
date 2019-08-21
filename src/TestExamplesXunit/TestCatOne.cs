@@ -8,7 +8,7 @@ using System.Web;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace XunitTestExamples
+namespace TestExamplesXunit
 {
     public class TestCatOne
     {
