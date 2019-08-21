@@ -61,5 +61,14 @@ namespace XunitTestExamples
         {
             Assert.True(false);
         }
+
+        [Theory]
+        [InlineData("1")]
+        [InlineData("2")]
+        [InlineData("3")]
+        public void TheoryWorks(string input)
+        {
+            Assert.True(int.TryParse(input, out _));
+        }
     }
 }
