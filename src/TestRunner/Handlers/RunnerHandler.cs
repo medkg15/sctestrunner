@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using System.Web;
     using Configuration;
     using Core;
@@ -49,17 +50,18 @@
                 testResultPath = Path.GetFullPath(Path.Combine(currentDirectory, testRunnerConfig.ResultPath));
             }
 
-            runner = new NUnitWebRunner(assemblyList, testResultPath);
+            //runner = new NUnitWebRunner(assemblyList, testResultPath);
+            runner = new XUnitWebRunner(assemblyList, testResultPath);
         }
 
-        public override void ProcessRequest(HttpContextBase context)
+        public override Task ProcessRequest(HttpContextBase context)
         {
             var path = context.Request.Path;
             var fileName = Path.GetFileName(path);
             if (fileName == null)
             {
                 NotFound(context);
-                return;
+                return Task.CompletedTask;
             }
 
             var file = fileName.ToLowerInvariant();
@@ -69,7 +71,7 @@
                 // the assets links would be absolute so they couldn't be
                 // loaded.
                 context.Response.Redirect("/" + testRunnerConfig.RoutePath + "/");
-                return;
+                return Task.CompletedTask;
             }
 
             runner.SessionId = context.Session.SessionID;
@@ -141,7 +143,8 @@
                     NotFound(context);
                     break;
             }
-        }
 
+            return Task.CompletedTask;
+        }
     }
 }

@@ -85,7 +85,7 @@
     <Compile Include="Configuration\TestRunnerSection.cs" />
     <Compile Include="Core\IWebRunner.cs" />
     <Compile Include="Core\NUnitWebRunner.cs" />
-    <Compile Include="Core\XunitAssemblyFinished.cs" />
+    <Compile Include="Core\XUnitTestResult.cs" />
     <Compile Include="Core\XUnitWebRunner.cs" />
     <Compile Include="Dtos\FixtureResult.cs" />
     <Compile Include="Dtos\StatusMessage.cs" />

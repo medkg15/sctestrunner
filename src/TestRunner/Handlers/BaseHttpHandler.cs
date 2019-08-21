@@ -11,17 +11,16 @@
     using System.Web;
     using System.Web.SessionState;
     using System.Web.Routing;
+    using System.Threading.Tasks;
 
-    public abstract class BaseHttpHandler : IHttpHandler, IRouteHandler, IReadOnlySessionState
+    public abstract class BaseHttpHandler : HttpTaskAsyncHandler, IRouteHandler, IReadOnlySessionState
     {
         private readonly ConcurrentDictionary<string, string> resourceCache = new ConcurrentDictionary<string, string>();
         private readonly ConcurrentDictionary<string, byte[]> imageCache = new ConcurrentDictionary<string, byte[]>();
-
-        public virtual bool IsReusable { get { return true; } }
-
-        public void ProcessRequest(HttpContext context)
+        
+        public override async Task ProcessRequestAsync(HttpContext context)
         {
-            ProcessRequest(new HttpContextWrapper(context));
+            await ProcessRequest(new HttpContextWrapper(context));
         }
 
         protected void ReturnResponse(HttpContextBase context, string message, string contentType = "text/plain", HttpStatusCode status = HttpStatusCode.OK, bool endResponse = false)
@@ -107,7 +106,7 @@
             return result;
         }
 
-        public abstract void ProcessRequest(HttpContextBase context);
+        public abstract Task ProcessRequest(HttpContextBase context);
 
         public IHttpHandler GetHttpHandler(RequestContext requestContext) { return this; }
     }
