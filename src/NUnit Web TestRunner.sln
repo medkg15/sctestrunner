@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{5A1DEE8E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExamplesXunit", "TestExamplesXunit\TestExamplesXunit.csproj", "{3CC0875B-EBDA-459B-A3C9-F9C8B9AFCE67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "SampleWebApp\SampleWebApp.csproj", "{3EAE1A10-8A8A-44BD-9308-337B77EF7E8A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExamplesXunit2", "TestExamplesXunit2\TestExamplesXunit2.csproj", "{03ADFA81-FFC8-4EB0-81B4-32EDA38E9F7F}"
 EndProject
 Global
@@ -40,6 +42,10 @@ Global
 		{3CC0875B-EBDA-459B-A3C9-F9C8B9AFCE67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CC0875B-EBDA-459B-A3C9-F9C8B9AFCE67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CC0875B-EBDA-459B-A3C9-F9C8B9AFCE67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EAE1A10-8A8A-44BD-9308-337B77EF7E8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EAE1A10-8A8A-44BD-9308-337B77EF7E8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EAE1A10-8A8A-44BD-9308-337B77EF7E8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EAE1A10-8A8A-44BD-9308-337B77EF7E8A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03ADFA81-FFC8-4EB0-81B4-32EDA38E9F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03ADFA81-FFC8-4EB0-81B4-32EDA38E9F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03ADFA81-FFC8-4EB0-81B4-32EDA38E9F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
