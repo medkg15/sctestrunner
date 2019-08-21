@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NUnitContrib.Web.TestExamples2
+namespace TestExamples2
 {
     [TestFixture]
     [Category("Cat Three")]

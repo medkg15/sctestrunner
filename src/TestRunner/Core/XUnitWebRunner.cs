@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnitContrib.Web.TestRunner.Dtos;
+using TestRunner.Dtos;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runners;
 
-namespace NUnitContrib.Web.TestRunner.Core
+namespace TestRunner.Core
 {
     public class XUnitWebRunner : ITestRunner
     {
@@ -37,26 +37,20 @@ namespace NUnitContrib.Web.TestRunner.Core
 
         public string SessionId { get; set; }
 
-        public StatusMessage CancelRunner()
+        public void CancelRunner()
         {
             cancel = true;
-
-            return new StatusMessage()
-            {
-                Text = "Runner cancelled",
-                Status = "Warning"
-            };
         }
 
         public RunnerStatus GetRunnerStatus()
         {
             if (running)
             {
-                return new RunnerStatus { Counter = (completedTests * 100) / testCases.Value.Count, Active = true };
+                return new RunnerStatus { CompletedTests = completedTests, TotalTests = testCases.Value.Count, IsActive = true };
             }
             else
             {
-                return new RunnerStatus { Counter = 0, Active = false };
+                return new RunnerStatus { CompletedTests = 0, TotalTests = testCases.Value.Count, IsActive = false };
             }
         }
 
@@ -81,27 +75,27 @@ namespace NUnitContrib.Web.TestRunner.Core
             };
         }
 
-        public RunSummary RunAllTests()
+        public RunResult RunAllTests()
         {
             return RunTests(testCases.Value);
         }
 
-        public RunSummary RunCategories(IEnumerable<string> categories)
+        public RunResult RunCategories(IEnumerable<string> categories)
         {
             return RunTests(testCases.Value.Where(c => categories.Contains(c.TestMethod.TestClass.TestCollection.DisplayName)));
         }
 
-        public RunSummary RunFixture(string name)
+        public RunResult RunFixture(string name)
         {
             return RunTests(testCases.Value.Where(c => c.TestMethod.TestClass.Class.Name == name));
         }
 
-        public RunSummary RunTest(string testId)
+        public RunResult RunTest(string testId)
         {
             return RunTests(testCases.Value.Where(c => c.UniqueID == testId));
         }
 
-        private RunSummary RunTests(IEnumerable<ITestCase> cases)
+        private RunResult RunTests(IEnumerable<ITestCase> cases)
         {
             if (running)
             {
@@ -114,7 +108,6 @@ namespace NUnitContrib.Web.TestRunner.Core
             ManualResetEvent executionFinished = new ManualResetEvent(false);
 
             var results = new Dictionary<string, XUnitTestResult>();
-            var output = new StringBuilder();
 
             var executionSink = new TestMessageSink();
 
@@ -170,17 +163,7 @@ namespace NUnitContrib.Web.TestRunner.Core
                     args.Stop();
                 }
             };
-
-            executionSink.Execution.TestOutputEvent += args =>
-            {
-                output.Append(args.Message.Output);
-
-                if (cancel)
-                {
-                    args.Stop();
-                }
-            };
-
+            
             executionSink.Execution.TestFinishedEvent += args =>
             {
                 Interlocked.Increment(ref this.completedTests);
@@ -217,24 +200,17 @@ namespace NUnitContrib.Web.TestRunner.Core
             completedTests = 0;
             running = false;
 
-            return CreateRunSummary(results, output);
+            return CreateRunSummary(results);
         }
 
-        private RunSummary CreateRunSummary(Dictionary<string, XUnitTestResult> results, StringBuilder output)
+        private RunResult CreateRunSummary(Dictionary<string, XUnitTestResult> results)
         {
             var passed = results.Values.Count(t => t.Result == XUnitTestResultType.Passed);
             var failed = results.Values.Count(t => t.Result == XUnitTestResultType.Failed);
             var errors = results.Values.Count(t => t.Result == XUnitTestResultType.Error);
             var skipped = results.Values.Count(t => t.Result == XUnitTestResultType.Skipped);
             var time = results.Sum(t => t.Value.ExecutionTime);
-
-            string status;
-            if (passed == results.Count) status = "success";
-            else if (failed + errors > 0) status = "danger";
-            else status = "warning";
-
-            var text = $"Passed {passed}, Failed {failed}, Errors {errors}, Skipped {skipped}, Time {time}";
-
+            
             Func<XUnitTestResult, string> getStatus = r =>
             {
                 switch (r.Result)
@@ -263,10 +239,15 @@ namespace NUnitContrib.Web.TestRunner.Core
                 };
             }).ToList();
 
-            return new RunSummary
+            return new RunResult
             {
-                Message = new StatusMessage { Text = text, Status = status },
-                TextOutput = output.ToString(),
+                Total = testCases.Value.Count,
+                Passed = passed,
+                Failed = failed,
+                Errors = errors,
+                Skipped = skipped,
+                ExecutionTime = time,
+                TextOutput = null,
                 Fixtures = testResults
                     .GroupBy(x => x.Fixture)
                     .Select(g => new FixtureResult { Name = g.Key, Tests = g.ToList() }),

@@ -14,7 +14,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\NUnitContrib.Web.TestRunner.dll" target="lib\net45\NUnitContrib.Web.TestRunner.dll" />
+    <file src="bin\Release\TestRunner.dll" target="lib\net45\TestRunner.dll" />
     <file src="App_Config\Include\TestRunnerConfig.config" target="content\App_Config\Include\TestRunnerConfig.config" />
   </files>
 </package>

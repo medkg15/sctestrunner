@@ -1,4 +1,4 @@
-﻿namespace NUnitContrib.Web.TestRunner.Handlers
+﻿namespace TestRunner.Handlers
 {
     using System;
     using System.Collections.Concurrent;
@@ -69,7 +69,7 @@
             filename = filename.ToLowerInvariant();
             string result;
             if (resourceCache.TryGetValue(filename, out result)) return result;
-            using (var stream = typeof(RunnerHandler).Assembly.GetManifestResourceStream("NUnitContrib.Web.TestRunner.Resources." + filename))
+            using (var stream = typeof(RunnerHandler).Assembly.GetManifestResourceStream("TestRunner.Resources." + filename))
             {
                 if (stream != null)
                 {
@@ -89,7 +89,7 @@
             filename = filename.ToLowerInvariant();
             byte[] result;
             if (imageCache.TryGetValue(filename, out result)) return result;
-            using (var stream = typeof(RunnerHandler).Assembly.GetManifestResourceStream("NUnitContrib.Web.TestRunner.Resources." + filename))
+            using (var stream = typeof(RunnerHandler).Assembly.GetManifestResourceStream("TestRunner.Resources." + filename))
             {
                 if (stream != null)
                 {

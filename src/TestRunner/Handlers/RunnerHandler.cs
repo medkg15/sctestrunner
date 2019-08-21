@@ -1,4 +1,4 @@
-﻿namespace NUnitContrib.Web.TestRunner.Handlers
+﻿namespace TestRunner.Handlers
 {
     using System;
     using System.Collections.Generic;
@@ -54,7 +54,7 @@
                         var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
                         if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
                         assemblyList.Add(assemblypath);
-                        runners.Add(new XUnitWebRunner(assemblypath, testResultPath));
+                        runners.Add(new XUnitWebRunner(assemblypath));
                     }
                 }
                 else if (runnerGroup.Key == "nunit")
@@ -71,7 +71,7 @@
                 }
             }
 
-            runner = new ConsolidatedRunner(runners);
+            runner = new ConsolidatedRunner(assemblyList, testResultPath, runners);
         }
 
         public override Task ProcessRequest(HttpContextBase context)
@@ -93,6 +93,8 @@
                 context.Response.Redirect("/" + testRunnerConfig.RoutePath + "/");
                 return Task.CompletedTask;
             }
+
+            runner.SetSessionID(context.Session.SessionID);
             
             switch (file)
             {

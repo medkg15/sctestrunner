@@ -9,8 +9,8 @@
     <ProjectGuid>{319D2979-5B3F-48F6-9984-317055BFA76F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NUnitContrib.Web.TestRunner</RootNamespace>
-    <AssemblyName>NUnitContrib.Web.TestRunner</AssemblyName>
+    <RootNamespace>TestRunner</RootNamespace>
+    <AssemblyName>TestRunner</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -86,6 +86,8 @@
     <Compile Include="Core\ConsolidatedRunner.cs" />
     <Compile Include="Core\IWebRunner.cs" />
     <Compile Include="Core\NUnitWebRunner.cs" />
+    <Compile Include="Core\RunnerStatus.cs" />
+    <Compile Include="Core\RunResult.cs" />
     <Compile Include="Core\XUnitTestResult.cs" />
     <Compile Include="Core\XUnitWebRunner.cs" />
     <Compile Include="Dtos\FixtureResult.cs" />

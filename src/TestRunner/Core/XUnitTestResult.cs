@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
 
-namespace NUnitContrib.Web.TestRunner.Core
+namespace TestRunner.Core
 {
     public class XUnitTestResult
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{EE6A6236-B1C3-4D76-8D9C-4901D59106DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NUnitContrib.Web.TestExamples2</RootNamespace>
-    <AssemblyName>NUnitContrib.Web.TestExamples2</AssemblyName>
+    <RootNamespace>TestExamples2</RootNamespace>
+    <AssemblyName>TestExamples2</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

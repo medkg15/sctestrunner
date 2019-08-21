@@ -1,4 +1,4 @@
-﻿namespace NUnitContrib.Web.TestRunner.Core
+﻿namespace TestRunner.Core
 {
     using System;
     using System.Collections.Generic;
@@ -117,13 +117,13 @@
             return testsInfo;
         }
 
-        public RunSummary RunAllTests()
+        public RunResult RunAllTests()
         {
             var testsResult = RunTests(TestFilter.Empty);
             return testsResult;
         }
 
-        public RunSummary RunTest(string testId)
+        public RunResult RunTest(string testId)
         {
             if (string.IsNullOrEmpty(testId))
                 throw new ArgumentNullException("testId");
@@ -138,7 +138,7 @@
             return RunTests(simpleNameFilter);
         }
 
-        public RunSummary RunCategories(IEnumerable<string> categories)
+        public RunResult RunCategories(IEnumerable<string> categories)
         {
             var suiteInfo = GetTestSuiteInfo();
             var validCategories = suiteInfo.Categories.Intersect(categories).ToArray();
@@ -151,7 +151,7 @@
             return testResults;
         }
 
-        public RunSummary RunFixture(string name)
+        public RunResult RunFixture(string name)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("name");
@@ -174,24 +174,17 @@
         public RunnerStatus GetRunnerStatus()
         {
             var active = Runner != null && Runner.Running;
-            if (TotalTests.Equals(0)) return new RunnerStatus { Counter = 0, Active = active };
+            if (TotalTests.Equals(0)) return new RunnerStatus { CompletedTests = 0, IsActive = active, TotalTests = TotalTests };
             var copy = new List<NUnit.Core.TestResult>(TestResults);
-            int counter = (copy.Count * 100) / TotalTests;
-            return new RunnerStatus { Counter = counter, Active = active };
+            return new RunnerStatus { CompletedTests = copy.Count, IsActive = active, TotalTests = TotalTests };
         }
 
-        public StatusMessage CancelRunner()
+        public void CancelRunner()
         {
             if (Runner != null && Runner.Running)
             {
                 Runner.CancelRun();
             }
-
-            return new StatusMessage
-            {
-                Text = "Runner cancelled",
-                Status = "Warning"
-            };
         }
 
         private static TestSuiteInfo GetTestSuiteInfo(TestSuite suite)
@@ -266,7 +259,7 @@
             }
         }
 
-        private RunSummary RunTests(ITestFilter filter)
+        private RunResult RunTests(ITestFilter filter)
         {
             CheckState();
 
@@ -300,7 +293,7 @@
             }
         }
 
-        private RunSummary GetTestResult()
+        private RunResult GetTestResult()
         {
             Func<NUnit.Core.TestResult, string> getStatus = r =>
             {
@@ -324,15 +317,6 @@
             var ignored = TestResults.Count(t => t.ResultState == ResultState.Ignored);
             var skipped = TestResults.Count(t => t.ResultState == ResultState.Skipped);
             var time = TestResults.Sum(t => t.Time);
-
-            string status;
-            if (passed == TestResults.Count) status = "success";
-            else if (failed + errors > 0) status = "danger";
-            else status = "warning";
-
-            var text = String.Format("Passed {0}, Failed {1}, Errors {2}, Inconclusive {3}, Invalid {4}, Ignored {5}, Skipped {6}, Time {7}",
-                passed, failed, errors, inconclusive, invalid, ignored, skipped, time);
-            var message = new StatusMessage { Text = text, Status = status };
 
             var testResults = TestResults.Select(r => new Dtos.TestResult 
             {
@@ -360,9 +344,17 @@
 
             var textoutput = TextOutputBuilder.ToString().TrimEnd();
 
-            return new RunSummary
+            return new RunResult
             {
-                Message = message,
+                Total = TotalTests,
+                Passed = passed,
+                Failed = failed,
+                Errors = errors,
+                Inconclusive = inconclusive,
+                Invalid = invalid,
+                Ignored = ignored,
+                Skipped = skipped,
+                ExecutionTime = (decimal)time,
                 Fixtures = fixtures,
                 ErrorList = errorList,
                 IgnoredList = ignoredList,

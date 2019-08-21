@@ -8,8 +8,8 @@
     <ProjectGuid>{486E1359-7838-4838-A907-DF9C593AE276}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NUnitContrib.Web.TestExamples</RootNamespace>
-    <AssemblyName>NUnitContrib.Web.TestExamples</AssemblyName>
+    <RootNamespace>TestExamples</RootNamespace>
+    <AssemblyName>TestExamples</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

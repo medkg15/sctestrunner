@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace NUnitContrib.Web.TestRunner.Configuration
+namespace TestRunner.Configuration
 {
     [ConfigurationCollection(typeof(AssemblyElement), AddItemName = "assembly")]
     public class AssemblyElementCollection : ConfigurationElementCollection

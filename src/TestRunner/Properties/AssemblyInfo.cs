@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using NUnitContrib.Web.TestRunner;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NUnit Web TestRunner")]
+[assembly: AssemblyTitle("Web TestRunner")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]

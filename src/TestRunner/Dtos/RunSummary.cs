@@ -1,4 +1,4 @@
-﻿namespace NUnitContrib.Web.TestRunner.Dtos
+﻿namespace TestRunner.Dtos
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;

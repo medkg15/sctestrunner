@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace NUnitContrib.Web.TestRunner.Configuration
+namespace TestRunner.Configuration
 {
     public class TestRunnerSection : ConfigurationSection
     {

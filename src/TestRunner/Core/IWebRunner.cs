@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Core;
-using NUnitContrib.Web.TestRunner.Dtos;
+using TestRunner.Dtos;
 
-namespace NUnitContrib.Web.TestRunner.Core
+namespace TestRunner.Core
 {
     public interface ITestRunner
     {
-        StatusMessage CancelRunner();
+        void CancelRunner();
 
         RunnerStatus GetRunnerStatus();
 
         TestSuiteInfo GetTestSuiteInfo();
 
-        RunSummary RunAllTests();
+        RunResult RunAllTests();
 
-        RunSummary RunCategories(IEnumerable<string> categories);
+        RunResult RunCategories(IEnumerable<string> categories);
 
-        RunSummary RunFixture(string name);
+        RunResult RunFixture(string name);
 
-        RunSummary RunTest(string testId);
+        RunResult RunTest(string testId);
     }
 }
