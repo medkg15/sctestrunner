@@ -13,15 +13,12 @@
 
     public class RunnerHandler : BaseHttpHandler
     {
-
         private static readonly TestRunnerSection testRunnerConfig =
             ConfigurationManager.GetSection("testrunner") as TestRunnerSection;
 
-        private readonly IWebRunner runner;
-        private readonly List<string> assemblyList;
-        private readonly string testResultPath;
+        private static readonly IWebRunner runner;
 
-        public RunnerHandler()
+        static RunnerHandler()
         {
             if (string.IsNullOrEmpty(testRunnerConfig.RoutePath))
                 throw new ConfigurationErrorsException("You must configure a route path.");
@@ -36,7 +33,7 @@
             // Ensure the assembly path exists
             var currentDirectory = new Uri(directoryName).LocalPath;
 
-            assemblyList = new List<string>();
+            var assemblyList = new List<string>();
             foreach (AssemblyElement testAssembly in testRunnerConfig.Assemblies)
             {
                 var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
@@ -44,6 +41,7 @@
                 assemblyList.Add(assemblypath);
             }
 
+            string testResultPath = null;
             // Get the test result path
             if (!string.IsNullOrEmpty(testRunnerConfig.ResultPath))
             {
