@@ -60,7 +60,7 @@
                 else if (runnerGroup.Key == "nunit")
                 {
                     var nunitAssemblies = new List<string>();
-                    foreach (AssemblyElement testAssembly in testRunnerConfig.Assemblies)
+                    foreach (AssemblyElement testAssembly in runnerGroup)
                     {
                         var assemblypath = Path.GetFullPath(Path.Combine(currentDirectory, testAssembly.Name + ".dll"));
                         if (!File.Exists(assemblypath)) throw new FileNotFoundException("Cannot find test assembly at " + assemblypath);
