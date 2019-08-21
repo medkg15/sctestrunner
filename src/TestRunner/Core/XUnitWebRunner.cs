@@ -18,10 +18,9 @@ namespace NUnitContrib.Web.TestRunner.Core
         private readonly string testResultPath;
 
         private readonly XunitFrontController controller;
-        private IList<ITestCase> testCases;
+        private Lazy<IList<ITestCase>> testCases;
         private volatile bool cancel;
         private bool running;
-        private int totalTestCount;
         private int completedTests;
 
         public XUnitWebRunner(IReadOnlyCollection<string> assemblies, string testResultPath)
@@ -30,12 +29,15 @@ namespace NUnitContrib.Web.TestRunner.Core
 
             controller = new XunitFrontController(AppDomainSupport.Denied, assemblies.First());
 
-            var discoverySink = new TestDiscoverySink();
-            controller.Find(false, discoverySink, TestFrameworkOptions.ForDiscovery());
+            testCases = new Lazy<IList<ITestCase>>(() => {
+                var discoverySink = new TestDiscoverySink();
 
-            discoverySink.Finished.WaitOne();
+                controller.Find(false, discoverySink, TestFrameworkOptions.ForDiscovery());
 
-            testCases = discoverySink.TestCases;
+                discoverySink.Finished.WaitOne();
+
+                return discoverySink.TestCases;
+            });
         }
 
         public string SessionId { get; set; }
@@ -55,7 +57,7 @@ namespace NUnitContrib.Web.TestRunner.Core
         {
             if (running)
             {
-                return new RunnerStatus { Counter = (completedTests * 100) / totalTestCount, Active = true };
+                return new RunnerStatus { Counter = (completedTests * 100) / testCases.Value.Count, Active = true };
             }
             else
             {
@@ -76,8 +78,8 @@ namespace NUnitContrib.Web.TestRunner.Core
         {
             return new TestSuiteInfo
             {
-                Categories = new HashSet<string>(testCases.GroupBy(t => t.TestMethod.TestClass.TestCollection.DisplayName).Select(g => g.Key)),
-                Fixtures = testCases.GroupBy(t => t.TestMethod.TestClass.Class.Name)
+                Categories = new HashSet<string>(testCases.Value.GroupBy(t => t.TestMethod.TestClass.TestCollection.DisplayName).Select(g => g.Key)),
+                Fixtures = testCases.Value.GroupBy(t => t.TestMethod.TestClass.Class.Name)
                     .Select(g => new TestFixtureInfo
                     {
                         Name = g.Key,
@@ -95,34 +97,33 @@ namespace NUnitContrib.Web.TestRunner.Core
 
         public RunSummary RunAllTests()
         {
-            return RunTests(testCases);
+            return RunTests(testCases.Value);
         }
 
         public RunSummary RunCategories(IEnumerable<string> categories)
         {
-            return RunTests(testCases.Where(c => categories.Contains(c.TestMethod.TestClass.TestCollection.DisplayName)));
+            return RunTests(testCases.Value.Where(c => categories.Contains(c.TestMethod.TestClass.TestCollection.DisplayName)));
         }
 
         public RunSummary RunFixture(string name)
         {
-            return RunTests(testCases.Where(c => c.TestMethod.TestClass.Class.Name == name));
+            return RunTests(testCases.Value.Where(c => c.TestMethod.TestClass.Class.Name == name));
         }
 
         public RunSummary RunTest(string testId)
         {
-            return RunTests(testCases.Where(c => c.UniqueID == testId));
+            return RunTests(testCases.Value.Where(c => c.UniqueID == testId));
         }
 
         private RunSummary RunTests(IEnumerable<ITestCase> cases)
         {
             if (running)
             {
-                throw new Exception("Cannot run again.");
+                throw new Exception("Already running tests.");
             }
 
             running = true;
             cancel = false;
-            totalTestCount = cases.Count();
 
             ManualResetEvent executionFinished = new ManualResetEvent(false);
 
@@ -211,8 +212,9 @@ namespace NUnitContrib.Web.TestRunner.Core
             executionSink.Execution.TestCollectionCleanupFailureEvent += (args) => OnError(args, results);
             executionSink.Execution.TestMethodCleanupFailureEvent += (args) => OnError(args, results);
 
-            executionSink.Diagnostics.DiagnosticMessageEvent += args => {
-                
+            executionSink.Diagnostics.DiagnosticMessageEvent += args =>
+            {
+
             };
 
             var options = TestFrameworkOptions.ForExecution();
@@ -224,6 +226,15 @@ namespace NUnitContrib.Web.TestRunner.Core
 
             executionFinished.WaitOne();
 
+            // cleanup
+            completedTests = 0;
+            running = false;
+
+            return CreateRunSummary(results, output);
+        }
+
+        private RunSummary CreateRunSummary(Dictionary<string, XUnitTestResult> results, StringBuilder output)
+        {
             var passed = results.Values.Count(t => t.Result == XUnitTestResultType.Passed);
             var failed = results.Values.Count(t => t.Result == XUnitTestResultType.Failed);
             var errors = results.Values.Count(t => t.Result == XUnitTestResultType.Error);
@@ -251,7 +262,7 @@ namespace NUnitContrib.Web.TestRunner.Core
                 }
             };
 
-            var testResults = testCases.Where(c => results.ContainsKey(c.UniqueID)).Select(c =>
+            var testResults = testCases.Value.Where(c => results.ContainsKey(c.UniqueID)).Select(c =>
             {
                 var result = results[c.UniqueID];
                 return new TestResult
@@ -264,7 +275,7 @@ namespace NUnitContrib.Web.TestRunner.Core
                     Message = result.Message
                 };
             }).ToList();
-            
+
             return new RunSummary
             {
                 Message = new StatusMessage { Text = text, Status = status },
